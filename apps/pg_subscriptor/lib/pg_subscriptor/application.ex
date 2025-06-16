@@ -8,8 +8,8 @@ defmodule PgSubscriptor.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: PgSubscriptor.Worker.start_link(arg)
-      # {PgSubscriptor.Worker, arg}
+      {Task.Supervisor, name: PgSubscriptor.TaskSupervisor},
+      {PgSubscriptor, 4321},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
