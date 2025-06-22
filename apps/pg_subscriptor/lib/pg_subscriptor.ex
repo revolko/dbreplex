@@ -14,6 +14,7 @@ defmodule PgSubscriptor do
 
   defp loop_acceptor(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
+    Logger.info("Got a new connection")
     {:ok, pid} = Task.Supervisor.start_child(PgSubscriptor.TaskSupervisor, fn -> serve(client) end)
     :ok = :gen_tcp.controlling_process(client, pid)
     loop_acceptor(socket)
@@ -28,7 +29,9 @@ defmodule PgSubscriptor do
   end
 
   defp read_line(client) do
-    :gen_tcp.recv(client, 0)
+    {status, msg} = :gen_tcp.recv(client, 0)
+    Logger.info(msg)
+    {status, msg}
   end
 
   defp write_line({:ok, line}, client) do
