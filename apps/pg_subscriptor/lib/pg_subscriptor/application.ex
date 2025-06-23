@@ -10,7 +10,8 @@ defmodule PgSubscriptor.Application do
     children = [
       # {Task.Supervisor, name: PgSubscriptor.TaskSupervisor},
       # {PgSubscriptor, 4321},
-      {PgRepl, [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]}
+      {PgRepl,
+       [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

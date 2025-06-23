@@ -45,5 +45,5 @@ defmodule PgRepl do
   end
 
   @epoch DateTime.to_unix(~U[2000-01-01 00:00:00Z], :microsecond)
-  defp current_time(), do: System.os_time(:microsecond) - @epoch 
+  defp current_time(), do: System.os_time(:microsecond) - @epoch
 end

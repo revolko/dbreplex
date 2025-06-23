@@ -26,7 +26,7 @@ defmodule PgSubscriptor.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:postgrex, "~> 0.20.0"},
+      {:postgrex, "~> 0.20.0"}
     ]
   end
 end
