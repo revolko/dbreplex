@@ -8,8 +8,7 @@ defmodule PgSubscriptor.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # {Task.Supervisor, name: PgSubscriptor.TaskSupervisor},
-      # {PgSubscriptor, 4321},
+      {Task.Supervisor, name: PgHandler.TaskSupervisor},
       {PgRepl,
        [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]}
     ]

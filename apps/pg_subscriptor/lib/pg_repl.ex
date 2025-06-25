@@ -17,20 +17,25 @@ defmodule PgRepl do
 
   @impl true
   def handle_connect(state) do
-    query = "CREATE_REPLICATION_SLOT postgrex TEMPORARY LOGICAL wal2json NOEXPORT_SNAPSHOT"
+    query = "CREATE_REPLICATION_SLOT postgrex TEMPORARY LOGICAL pgoutput NOEXPORT_SNAPSHOT"
     {:query, query, %{state | step: :create_slot}}
   end
 
   @impl true
   def handle_result(results, %{step: :create_slot} = state) when is_list(results) do
-    query = "START_REPLICATION SLOT postgrex LOGICAL 0/0"
+    query =
+      "START_REPLICATION SLOT postgrex LOGICAL 0/0 (proto_version '1', publication_names 'postgrex_example')"
+
     {:stream, query, [], %{state | step: :streaming}}
   end
 
   @impl true
   # https://www.postgresql.org/docs/14/protocol-replication.html
   def handle_data(<<?w, _wal_start::64, _wal_end::64, _clock::64, rest::binary>>, state) do
-    IO.inspect(rest)
+    Task.Supervisor.start_child(PgHandler.TaskSupervisor, fn ->
+      PgHandler.handle_message(rest)
+    end)
+
     {:noreply, state}
   end
 
