@@ -32,10 +32,7 @@ defmodule PgRepl do
   @impl true
   # https://www.postgresql.org/docs/14/protocol-replication.html
   def handle_data(<<?w, _wal_start::64, _wal_end::64, _clock::64, rest::binary>>, state) do
-    Task.Supervisor.start_child(PgHandler.TaskSupervisor, fn ->
-      PgHandler.handle_message(rest)
-    end)
-
+    GenServer.cast(PgHandler, {:handle, rest})
     {:noreply, state}
   end
 
