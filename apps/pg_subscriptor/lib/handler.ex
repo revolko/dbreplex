@@ -19,7 +19,18 @@ defmodule PgHandler do
 
   defp handle_message(message) do
     <<msg_type::utf8, msg::binary>> = message
-    IO.puts(<<msg_type>>)
-    IO.inspect(msg)
+
+    case <<msg_type>> do
+      "B" ->
+        handle_beggin(msg)
+
+      _ ->
+        Logger.info("Got unknown msg")
+    end
+  end
+
+  defp handle_beggin(body) do
+    Logger.info("Got BEGGIN msg")
+    <<_x_log_rec_ptr::64, _timestamp_tz::64, _transaction_id::32>> = body
   end
 end
