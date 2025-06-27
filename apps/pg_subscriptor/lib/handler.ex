@@ -57,12 +57,31 @@ defmodule PgHandler do
 
   defp handle_origin(body) do
     Logger.info("Got origin msg")
-    <<_lsn_commit::64, _name>> = body
+    <<_lsn_commit::64, rest::binary>> = body
+    {name, _} = get_string(rest)
+    Logger.info("Got postgres origin name #{name}")
   end
 
   defp handle_relation(body) do
     Logger.info("Got relation msg")
     # how to handle strings (null-terminated strings)
-    <<_transaction_id::32, _relation_oid::32, _namespace_and_rest::binary>> = body
+    <<_transaction_id::32, _relation_oid::32, rest::binary>> = body
+    {namespace, rest} = get_string(rest)
+    Logger.info("Got postgres relation namespace #{namespace}")
+    {relation, _rest} = get_string(rest)
+    Logger.info("Got postgres relation name #{relation}")
+  end
+
+  defp get_string(<<0>>) do
+    {<<>>, <<>>}
+  end
+
+  defp get_string(<<0, rest::binary>>) do
+    {<<>>, rest}
+  end
+
+  defp get_string(<<char::binary-size(1), rest::binary>>) do
+    {last_char, new_rest} = get_string(rest)
+    {char <> last_char, new_rest}
   end
 end
