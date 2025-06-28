@@ -67,9 +67,24 @@ defmodule PgHandler do
     # how to handle strings (null-terminated strings)
     <<_transaction_id::32, _relation_oid::32, rest::binary>> = body
     {namespace, rest} = get_string(rest)
-    Logger.info("Got postgres relation namespace #{namespace}")
-    {relation, _rest} = get_string(rest)
-    Logger.info("Got postgres relation name #{relation}")
+    {relation, rest} = get_string(rest)
+    <<_repl_identity_setting::8, _columns_num::16, _flags::8, rest::binary>> = rest
+
+    Enum.each(get_columns_info(rest), fn {_flags, col_name, _type_oid, _type_modifier} ->
+      Logger.info(
+        "Got relation namespace: #{namespace}, relation: #{relation}, column: #{col_name}."
+      )
+    end)
+  end
+
+  defp get_columns_info(<<>>) do
+    []
+  end
+
+  defp get_columns_info(<<flags::8, msg::binary>>) do
+    {name, rest} = get_string(msg)
+    <<type_oid::32, type_modifier::32, rest::binary>> = rest
+    [{flags, name, type_oid, type_modifier} | get_columns_info(rest)]
   end
 
   defp get_string(<<0>>) do
