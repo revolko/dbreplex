@@ -36,6 +36,12 @@ defmodule PgHandler do
       "R" ->
         handle_relation(msg)
 
+      "Y" ->
+        handle_type(msg)
+
+      "I" ->
+        handle_insert(msg)
+
       _ ->
         Logger.info("Got unknown msg")
     end
@@ -75,6 +81,19 @@ defmodule PgHandler do
         "Got relation namespace: #{namespace}, relation: #{relation}, column: #{col_name}."
       )
     end)
+  end
+
+  defp handle_type(body) do
+    Logger.info("Got TYPE msg")
+    <<_transaction_id::32, _type_oid::32, rest::binary>> = body
+    {_namespace, rest} = get_string(rest)
+    {_type_name, _rest} = get_string(rest)
+  end
+
+  defp handle_insert(body) do
+    Logger.info("Got INSERT msg")
+    # transaction_id not present in this version
+    <<_relation_oid::32, "N", _tuple_data::binary>> = body
   end
 
   defp get_columns_info(<<>>) do
