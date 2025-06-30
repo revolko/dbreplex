@@ -2,6 +2,8 @@ defmodule PgHandler do
   use GenServer
   require Logger
 
+  alias Core.Messages.Insert
+
   def start_link(default) do
     GenServer.start_link(__MODULE__, default, name: __MODULE__)
   end
@@ -43,7 +45,7 @@ defmodule PgHandler do
         handle_insert(msg)
 
       _ ->
-        Logger.info("Got unknown msg")
+        Logger.info("Got unknown msg: '#{<<msg_type>>}'")
     end
   end
 
@@ -93,7 +95,15 @@ defmodule PgHandler do
   defp handle_insert(body) do
     Logger.info("Got INSERT msg")
     # transaction_id not present in this version
-    <<_relation_oid::32, "N", _tuple_data::binary>> = body
+    <<relation_oid::32, "N", tuple_data::binary>> = body
+
+    message = %Insert{
+      relation_oid: relation_oid,
+      columns: tuple_data
+    }
+
+    Logger.debug(message)
+    message
   end
 
   defp get_columns_info(<<>>) do
