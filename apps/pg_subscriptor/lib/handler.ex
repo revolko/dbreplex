@@ -73,10 +73,10 @@ defmodule PgHandler do
   defp handle_relation(body) do
     Logger.info("Got relation msg")
     # how to handle strings (null-terminated strings)
-    <<_transaction_id::32, _relation_oid::32, rest::binary>> = body
+    <<_relation_oid::32, rest::binary>> = body
     {namespace, rest} = get_string(rest)
     {relation, rest} = get_string(rest)
-    <<_repl_identity_setting::8, _columns_num::16, _flags::8, rest::binary>> = rest
+    <<_repl_identity_setting::8, _columns_num::16, rest::binary>> = rest
 
     Enum.each(get_columns_info(rest), fn {_flags, col_name, _type_oid, _type_modifier} ->
       Logger.info(
