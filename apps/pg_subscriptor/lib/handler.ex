@@ -3,6 +3,7 @@ defmodule PgHandler do
   require Logger
 
   alias Core.Messages.Insert
+  alias PgSubscriber.TupleData
 
   def start_link(default) do
     GenServer.start_link(__MODULE__, default, name: __MODULE__)
@@ -43,6 +44,9 @@ defmodule PgHandler do
 
       "I" ->
         handle_insert(msg)
+
+      "U" ->
+        handle_update!(msg)
 
       _ ->
         Logger.info("Got unknown msg: '#{<<msg_type>>}'")
@@ -104,6 +108,30 @@ defmodule PgHandler do
 
     Logger.debug(message)
     message
+  end
+
+  defp handle_update!(body) do
+    Logger.info("Got UPDATE msg")
+    <<_relation_oid::32, rest::binary>> = body
+
+    {tuple_type, tuple_data, rest} =
+      case rest do
+        <<tuple_type::8, rest::binary>> when tuple_type in [?O, ?K] ->
+          Logger.info("Got #{<<tuple_type>>} tuple")
+          {:ok, tuple_data, rest} = TupleData.get_tuple_data(rest)
+          {tuple_type, tuple_data, rest}
+
+        _ ->
+          Logger.info("Not O/K tuple")
+          {nil, nil, rest}
+      end
+
+    Logger.info(tuple_type: <<tuple_type>>)
+    Logger.info(tuple_data: tuple_data)
+    <<"N", rest::binary>> = rest
+    {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest)
+    Logger.info(tuple_type: "N")
+    Logger.info(tuple_data: tuple_data)
   end
 
   defp get_columns_info(<<>>) do
