@@ -7,3 +7,5 @@ CREATE TABLE distributors (
      did    integer NOT NULL,
      name   varchar(255) NOT NULL
 );
+
+CREATE PUBLICATION postgrex_example FOR ALL TABLES;
