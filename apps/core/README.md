@@ -3,7 +3,7 @@
 **Core** is the shared library for defining the internal data representation and contracts used across the replication system. It provides:
 
 - Canonical schemas for replication messages received from databases (e.g., PostgreSQL, MySQL).
-- Contracts (interfaces) that target apps can implement to handle replicated messages.
+- Contracts (interfaces) that publisher apps can implement to handle replicated messages.
 - Utilities for encoding, decoding, and working with messages in a uniform way.
 
 ## Installation
@@ -23,11 +23,11 @@ alias Core.Messages.Insert
 }
 ```
 
-### Implementing the target contract
-In your custom target app, you can implement the Core.TargetContract behaviour:
+### Implementing the publisher contract
+In your custom publisher app, you can implement the Core.PublisherContract behaviour:
 ```elixir
-defmodule MyCustomTarget do
-  @behaviour Core.TargetContract
+defmodule MyCustomPublisher do
+  @behaviour Core.PublisherContract
 
   @impl true
   def handle_message(message) do
