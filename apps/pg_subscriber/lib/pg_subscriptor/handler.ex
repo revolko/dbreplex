@@ -51,6 +51,9 @@ defmodule PgSubscriber.Handler do
       "D" ->
         handle_delete!(msg)
 
+      "T" ->
+        handle_truncate!(msg)
+
       _ ->
         Logger.info("Got unknown msg: '#{<<msg_type>>}'")
     end
@@ -144,6 +147,23 @@ defmodule PgSubscriber.Handler do
 
     Logger.info(tuple_type: <<tuple_type>>)
     Logger.info(tuple_data: tuple_data)
+  end
+
+  defp handle_truncate!(body) do
+    Logger.info("Got TRUNCATE msg")
+    <<relations_num::32, _options::8, rest::binary-size(4 * relations_num)>> = body
+    {relation_oids, <<>>} = get_relations_oids(relations_num, rest)
+    Logger.info(relation_oids: relation_oids)
+  end
+
+  defp get_relations_oids(0, data) do
+    {[], data}
+  end
+
+  defp get_relations_oids(relations_num, data) do
+    <<relation_oid::32, rest::binary>> = data
+    {relation_oids, rest} = get_relations_oids(relations_num - 1, rest)
+    {[relation_oid | relation_oids], rest}
   end
 
   defp get_columns_info(<<>>) do
