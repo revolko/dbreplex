@@ -48,6 +48,9 @@ defmodule PgSubscriber.Handler do
       "U" ->
         handle_update!(msg)
 
+      "D" ->
+        handle_delete!(msg)
+
       _ ->
         Logger.info("Got unknown msg: '#{<<msg_type>>}'")
     end
@@ -131,6 +134,15 @@ defmodule PgSubscriber.Handler do
     <<"N", rest::binary>> = rest
     {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest)
     Logger.info(tuple_type: "N")
+    Logger.info(tuple_data: tuple_data)
+  end
+
+  defp handle_delete!(body) do
+    Logger.info("Got DELETE msg")
+    <<_relation_oid::32, tuple_type::8, rest::binary>> = body
+    {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest)
+
+    Logger.info(tuple_type: <<tuple_type>>)
     Logger.info(tuple_data: tuple_data)
   end
 
