@@ -1,4 +1,4 @@
-defmodule PgRepl do
+defmodule PgSubscriber.Repl do
   use Postgrex.ReplicationConnection
 
   def start_link(opts) do

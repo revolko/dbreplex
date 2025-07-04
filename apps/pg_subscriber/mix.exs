@@ -1,9 +1,9 @@
-defmodule PgSubscriptor.MixProject do
+defmodule PgSubscriber.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :pg_subscriptor,
+      app: :pg_subscriber,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -19,7 +19,7 @@ defmodule PgSubscriptor.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {PgSubscriptor.Application, []}
+      mod: {PgSubscriber.Application, []}
     ]
   end
 
