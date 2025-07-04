@@ -1,4 +1,4 @@
-defmodule PgHandler do
+defmodule PgSubscriber.Handler do
   use GenServer
   require Logger
 

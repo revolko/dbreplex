@@ -8,7 +8,7 @@ defmodule PgSubscriptor.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      PgHandler,
+      PgSubscriber.Handler,
       {PgRepl,
        [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]}
     ]
