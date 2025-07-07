@@ -2,6 +2,8 @@ defmodule PgSubscriber.Handler do
   use GenServer
   require Logger
 
+  alias Core.Messages.MessageProtocol
+  alias PgSubscriber.Messages.Update
   alias Core.Messages.Insert
   alias PgSubscriber.TupleData
 
@@ -116,28 +118,14 @@ defmodule PgSubscriber.Handler do
     message
   end
 
-  defp handle_update!(body) do
+  defp handle_update!(data) do
     Logger.info("Got UPDATE msg")
-    <<_relation_oid::32, rest::binary>> = body
+    update_message = Update.from_data!(data)
+    Logger.debug(update: update_message)
 
-    {tuple_type, tuple_data, rest} =
-      case rest do
-        <<tuple_type::8, rest::binary>> when tuple_type in [?O, ?K] ->
-          Logger.info("Got #{<<tuple_type>>} tuple")
-          {:ok, tuple_data, rest} = TupleData.get_tuple_data(rest)
-          {tuple_type, tuple_data, rest}
-
-        _ ->
-          Logger.info("Not O/K tuple")
-          {nil, nil, rest}
-      end
-
-    Logger.info(tuple_type: <<tuple_type>>)
-    Logger.info(tuple_data: tuple_data)
-    <<"N", rest::binary>> = rest
-    {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest)
-    Logger.info(tuple_type: "N")
-    Logger.info(tuple_data: tuple_data)
+    message = MessageProtocol.to_core_message(update_message)
+    Logger.debug(update: message)
+    message
   end
 
   defp handle_delete!(body) do
