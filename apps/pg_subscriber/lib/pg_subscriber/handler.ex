@@ -107,7 +107,8 @@ defmodule PgSubscriber.Handler do
   defp handle_insert(body) do
     Logger.info("Got INSERT msg")
     # transaction_id not present in this version
-    <<relation_oid::32, "N", tuple_data::binary>> = body
+    <<relation_oid::32, "N", rest::binary>> = body
+    tuple_data = TupleData.get_tuple_data(rest)
 
     message = %Insert{
       relation_oid: relation_oid,
