@@ -7,6 +7,8 @@ defmodule PgSubscriber.Handler do
   alias Core.Messages.Insert
   alias PgSubscriber.TupleData
 
+  @publisher Application.compile_env(:main_app, :publisher, nil)
+
   def start_link(default) do
     GenServer.start_link(__MODULE__, default, name: __MODULE__)
   end
@@ -25,7 +27,7 @@ defmodule PgSubscriber.Handler do
   defp handle_message(message) do
     <<msg_type::utf8, msg::binary>> = message
 
-    case <<msg_type>> do
+    message = case <<msg_type>> do
       "B" ->
         handle_beggin(msg)
 
@@ -59,6 +61,9 @@ defmodule PgSubscriber.Handler do
       _ ->
         Logger.info("Got unknown msg: '#{<<msg_type>>}'")
     end
+
+    Logger.info("Parsed message: #{inspect(message)}")
+    @publisher.handle_message(message)
   end
 
   defp handle_beggin(body) do
