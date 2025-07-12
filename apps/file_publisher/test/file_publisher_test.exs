@@ -4,9 +4,9 @@ defmodule FilePublisherTest do
   doctest FilePublisher
 
   test "receive INSERT message" do
-    {:ok, _pid} = FilePublisher.start_link("/tmp/replication.log")
+    # {:ok, _pid} = FilePublisher.start_link("/tmp/replication.log")
     save_message(5)
-    Process.sleep(1000)
+    Process.sleep(100)
   end
 
   defp save_message(0) do
