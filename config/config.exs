@@ -16,3 +16,8 @@ import Config
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+
+config :main_app,
+  subscriber: PgSubscriber.Handler,
+  replicator: PgSubscriber.Repl,
+  publisher: FilePublisher

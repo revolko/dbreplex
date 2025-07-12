@@ -3,13 +3,17 @@ defmodule MainApp do
 
   use Application
 
+  @subscriber Application.compile_env(:main_app, :subscriber, nil)
+  @replicator Application.compile_env(:main_app, :replicator, nil)
+  @publisher Application.compile_env(:main_app, :publisher, nil)
+
   @impl true
   def start(_type, _args) do
     children = [
-      PgSubscriber.Handler,
-      {PgSubscriber.Repl,
+      @subscriber,
+      {@replicator,
        [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]},
-      {FilePublisher, "/tmp/replication.log"},
+      {@publisher, "/tmp/replication.log"},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
