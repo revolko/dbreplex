@@ -1,6 +1,4 @@
-defmodule PgSubscriber.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
+defmodule MainApp do
   @moduledoc false
 
   use Application
@@ -10,12 +8,13 @@ defmodule PgSubscriber.Application do
     children = [
       PgSubscriber.Handler,
       {PgSubscriber.Repl,
-       [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]}
+       [host: "localhost", database: "postgres", username: "postgres", password: "postgres"]},
+      {FilePublisher, "/tmp/replication.log"},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: PgSubscriber.Supervisor]
+    opts = [strategy: :one_for_one, name: MainApp.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
