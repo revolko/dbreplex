@@ -2,6 +2,7 @@ defmodule PgSubscriber.Handler do
   use GenServer
   require Logger
 
+  alias PgSubscriber.Messages.Delete
   alias Core.Messages.MessageProtocol
   alias PgSubscriber.Messages.Update
   alias Core.Messages.Insert
@@ -27,40 +28,41 @@ defmodule PgSubscriber.Handler do
   defp handle_message(message) do
     <<msg_type::utf8, msg::binary>> = message
 
-    message = case <<msg_type>> do
-      "B" ->
-        handle_beggin(msg)
+    message =
+      case <<msg_type>> do
+        "B" ->
+          handle_beggin(msg)
 
-      "M" ->
-        handle_replication_msg(msg)
+        "M" ->
+          handle_replication_msg(msg)
 
-      "C" ->
-        handle_commit(msg)
+        "C" ->
+          handle_commit(msg)
 
-      "O" ->
-        handle_origin(msg)
+        "O" ->
+          handle_origin(msg)
 
-      "R" ->
-        handle_relation(msg)
+        "R" ->
+          handle_relation(msg)
 
-      "Y" ->
-        handle_type(msg)
+        "Y" ->
+          handle_type(msg)
 
-      "I" ->
-        handle_insert(msg)
+        "I" ->
+          handle_insert(msg)
 
-      "U" ->
-        handle_update!(msg)
+        "U" ->
+          handle_update!(msg)
 
-      "D" ->
-        handle_delete!(msg)
+        "D" ->
+          handle_delete!(msg)
 
-      "T" ->
-        handle_truncate!(msg)
+        "T" ->
+          handle_truncate!(msg)
 
-      _ ->
-        Logger.info("Got unknown msg: '#{<<msg_type>>}'")
-    end
+        _ ->
+          Logger.info("Got unknown msg: '#{<<msg_type>>}'")
+      end
 
     Logger.info("Parsed message: #{inspect(message)}")
     @publisher.handle_message(message)
@@ -134,13 +136,15 @@ defmodule PgSubscriber.Handler do
     message
   end
 
-  defp handle_delete!(body) do
+  defp handle_delete!(data) do
     Logger.info("Got DELETE msg")
-    <<_relation_oid::32, tuple_type::8, rest::binary>> = body
-    {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest)
 
-    Logger.info(tuple_type: <<tuple_type>>)
-    Logger.info(tuple_data: tuple_data)
+    delete = Delete.from_data!(data)
+    Logger.debug(delete: delete)
+
+    message = MessageProtocol.to_core_message(delete)
+    Logger.debug(delete_core: message)
+    message
   end
 
   defp handle_truncate!(body) do
