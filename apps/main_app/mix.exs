@@ -19,7 +19,7 @@ defmodule MainApp.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {MainApp, []},
+      mod: {MainApp, []}
     ]
   end
 
@@ -33,7 +33,7 @@ defmodule MainApp.MixProject do
       {:pg_subscriber, in_umbrella: true},
 
       # Publishers
-      {:file_publisher, in_umbrella: true},
+      {:file_publisher, in_umbrella: true}
     ]
   end
 end

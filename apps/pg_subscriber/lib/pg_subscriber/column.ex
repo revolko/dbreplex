@@ -1,19 +1,18 @@
 defmodule PgSubscriber.Column do
-
   alias __MODULE__
 
   @type kind :: ?n | ?u | ?t | ?b
   @type col_val :: nil | binary | String.t()
   @type t :: %__MODULE__{
-    kind: kind,
-    value: col_val,
-  }
+          kind: kind,
+          value: col_val
+        }
 
   defstruct [:kind, :value]
 
   @spec get_cols(non_neg_integer(), binary()) ::
-    {:ok, [Column.t()], binary()}
-    | {:error, term()}
+          {:ok, [Column.t()], binary()}
+          | {:error, term()}
   @doc """
   Parses all Columns from a single TupleData in a binary message and returns the parsed list of Column structs and the remaining binary.
   In case of invalid format, an error with reason is returned.
@@ -24,8 +23,8 @@ defmodule PgSubscriber.Column do
 
   def get_cols(num_of_cols, data) do
     with <<kind::8, rest_after_kind::binary>> <- data,
-    {:ok, value, rest_after_parse_col} <- parse_column_from_binary(kind, rest_after_kind),
-    {:ok, cols, rest_final} <- get_cols(num_of_cols - 1, rest_after_parse_col) do
+         {:ok, value, rest_after_parse_col} <- parse_column_from_binary(kind, rest_after_kind),
+         {:ok, cols, rest_final} <- get_cols(num_of_cols - 1, rest_after_parse_col) do
       {:ok, [%Column{kind: kind, value: value} | cols], rest_final}
     else
       {:error, reason} -> {:error, reason}
@@ -37,6 +36,7 @@ defmodule PgSubscriber.Column do
     case kind do
       ?b ->
         parse_length_prefixed_value_from_binary(data, & &1)
+
       ?t ->
         parse_length_prefixed_value_from_binary(data, &to_string/1)
 
