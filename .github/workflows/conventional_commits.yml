@@ -1,0 +1,19 @@
+name: Elixir CI
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  commits:
+    name: Conventional commits check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run commits check
+        uses: webiny/action-conventional-commits@v1.3.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
