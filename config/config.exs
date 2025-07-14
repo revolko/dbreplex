@@ -18,6 +18,27 @@ import Config
 #
 
 config :main_app,
-  subscriber: PgSubscriber.Handler,
-  replicator: PgSubscriber.Repl,
-  publisher: FilePublisher
+  subscribers: [
+    %{
+      module: PgSubscriber,
+      init_arg: [
+        repl: [
+          host: "localhost",
+          database: "postgres",
+          username: "postgres",
+          password: "postgres"
+        ],
+        handler: []
+      ]
+    }
+  ],
+  publishers: [
+    %{
+      module: FilePublisher,
+      init_arg: "/tmp/replication.log"
+    },
+    %{
+      module: FilePublisher,
+      init_arg: "/tmp/replication2.log"
+    }
+  ]
