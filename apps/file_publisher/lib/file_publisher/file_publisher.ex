@@ -9,12 +9,12 @@ defmodule FilePublisher do
   @behaviour Core.PublisherContract
 
   def start_link(file_path) do
-    GenServer.start_link(__MODULE__, file_path, name: __MODULE__)
+    GenServer.start_link(__MODULE__, file_path)
   end
 
   @impl Core.PublisherContract
-  def handle_message(message) do
-    GenServer.cast(__MODULE__, {:replication_message, message})
+  def handle_message(server_pid, message) do
+    GenServer.cast(server_pid, {:replication_message, message})
   end
 
   @impl true
