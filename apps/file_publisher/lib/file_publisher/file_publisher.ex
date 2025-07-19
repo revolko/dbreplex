@@ -19,6 +19,7 @@ defmodule FilePublisher do
 
   @impl true
   def init(file_path) do
+    Registry.register(PublisherRegistry, :publishers, {FilePublisher, :handle_message})
     {:ok, file} = File.open(file_path, [:append])
     {:ok, %{file: file}}
   end

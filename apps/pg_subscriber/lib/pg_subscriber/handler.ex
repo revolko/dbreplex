@@ -8,8 +8,6 @@ defmodule PgSubscriber.Handler do
   alias Core.Messages.Insert
   alias PgSubscriber.TupleData
 
-  @publisher Application.compile_env(:main_app, :publisher, nil)
-
   def start_link(default) do
     GenServer.start_link(__MODULE__, default, name: __MODULE__)
   end
@@ -21,7 +19,14 @@ defmodule PgSubscriber.Handler do
 
   @impl true
   def handle_cast({:handle, message}, state) do
-    handle_message(message)
+    message = handle_message(message)
+
+    Registry.dispatch(PublisherRegistry, :publishers, fn pubs ->
+      for {pid, {module, handle_message}} <- pubs do
+        apply(module, handle_message, [pid, message])
+      end
+    end)
+
     {:noreply, state}
   end
 
@@ -65,7 +70,7 @@ defmodule PgSubscriber.Handler do
       end
 
     Logger.info("Parsed message: #{inspect(message)}")
-    @publisher.handle_message(message)
+    message
   end
 
   defp handle_beggin(body) do
