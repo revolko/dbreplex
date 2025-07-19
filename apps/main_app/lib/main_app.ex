@@ -9,6 +9,7 @@ defmodule MainApp do
   @impl true
   def start(_type, _args) do
     children = [
+      {Registry, [keys: :duplicate, name: PublisherRegistry]},
       get_children_spec(@publishers),
       get_children_spec(@subscribers)
     ]
