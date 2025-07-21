@@ -2,6 +2,7 @@ defmodule PgSubscriber.Handler do
   use GenServer
   require Logger
 
+  alias PgSubscriber.RelationStore
   alias PgSubscriber.Messages.Relation
   alias PgSubscriber.Messages.Delete
   alias Core.Messages.MessageProtocol
@@ -99,7 +100,9 @@ defmodule PgSubscriber.Handler do
   defp handle_relation(data) do
     Logger.info("Got relation msg")
     relation = Relation.from_data!(data)
-    Logger.debug(relation: relation)
+    RelationStore.store_relation(relation)
+    {:ok, relation} = RelationStore.get_relation(relation.relation_oid)
+    Logger.debug(stored_relation: relation)
     relation
   end
 
