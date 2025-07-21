@@ -3,6 +3,7 @@ defmodule PgSubscriber.Utils do
   Collection of PG helper functions.
   """
   @type pg_string :: binary()
+  @type oid :: pos_integer()
 
   @doc """
   Parse null-terminated string from binary.
