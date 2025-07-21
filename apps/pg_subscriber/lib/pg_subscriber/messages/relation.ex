@@ -15,7 +15,7 @@ defmodule PgSubscriber.Messages.Relation do
   @primary_key_flag 1
 
   @type t :: %__MODULE__{
-          relation_oid: pos_integer(),
+          relation_oid: Utils.oid(),
           namespace: binary(),
           name: binary(),
           replica_identity_setting: pos_integer(),

@@ -6,10 +6,12 @@ defmodule PgSubscriber.Messages.Delete do
   alias PgSubscriber.Column
   alias PgSubscriber.TupleData
   alias PgSubscriber.Messages.MessageBehaviour
+  alias PgSubscriber.Utils
+
   @behaviour MessageBehaviour
 
   @type t :: %__MODULE__{
-          relation_oid: pos_integer(),
+          relation_oid: Utils.oid(),
           tuple_type: ?O | ?K,
           columns: [Column.t()]
         }

@@ -6,12 +6,13 @@ defmodule PgSubscriber.Messages.Update do
   alias PgSubscriber.Column
   alias PgSubscriber.TupleData
   alias PgSubscriber.Messages.Update
+  alias PgSubscriber.Utils
   require Logger
 
   @behaviour MessageBehaviour
 
   @type t :: %__MODULE__{
-          relation_oid: pos_integer(),
+          relation_oid: Utils.oid(),
           old_columns: list(Column.t()),
           new_columns: list(Column.t())
         }
