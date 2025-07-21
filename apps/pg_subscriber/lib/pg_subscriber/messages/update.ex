@@ -20,6 +20,7 @@ defmodule PgSubscriber.Messages.Update do
   @enforce_keys [:relation_oid, :old_columns, :new_columns]
   defstruct @enforce_keys
 
+  @impl MessageBehaviour
   def from_data!(data) do
     <<relation_oid::32, rest::binary>> = data
 

@@ -25,6 +25,7 @@ defmodule PgSubscriber.Messages.Relation do
   @enforce_keys [:relation_oid, :namespace, :name, :replica_identity_setting, :columns]
   defstruct @enforce_keys
 
+  @impl MessageBehaviour
   def from_data!(data) do
     <<relation_oid::32, rest::binary>> = data
     {namespace, rest} = Utils.get_string(rest)
