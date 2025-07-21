@@ -10,6 +10,7 @@ defmodule PgSubscriber do
 
   def init(repl: repl_config, handler: handler_config) do
     children = [
+      {PgSubscriber.RelationStore, %{}},
       {PgSubscriber.Handler, handler_config},
       {PgSubscriber.Repl, repl_config}
     ]
