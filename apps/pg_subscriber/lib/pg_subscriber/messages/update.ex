@@ -51,11 +51,24 @@ end
 
 defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Update do
   alias Core.Messages.Update
+  alias Core.Messages.Column
+  alias PgSubscriber.RelationStore
 
   def to_core_message(update_message) do
+    {:ok, relation} = RelationStore.get_relation(update_message.relation_oid)
+
     %Update{
       relation_oid: update_message.relation_oid,
-      columns: update_message.new_columns
+      columns:
+        Enum.zip(update_message.new_columns, relation.columns)
+        |> Enum.map(fn {new_col, rel_col} ->
+          %Column{name: rel_col.name, value: new_col.value}
+        end),
+      where:
+        Enum.zip(update_message.old_columns, relation.columns)
+        |> Enum.map(fn {old_col, rel_col} ->
+          %Column{name: rel_col.name, value: old_col.value}
+        end)
     }
   end
 end
