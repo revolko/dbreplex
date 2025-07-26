@@ -51,9 +51,11 @@ defmodule PgSubscriber.Handler do
 
         "R" ->
           Logger.info("Got RELATION msg")
-          relation = PgRelation.from_data!(msg)
-          RelationStore.store_relation(relation)
-          {:not_publish}
+
+          with {:ok, relation} <- PgRelation.from_data(msg) do
+            RelationStore.store_relation(relation)
+            {:not_publish}
+          end
 
         "I" ->
           Logger.info("Got INSERT msg")
@@ -72,12 +74,9 @@ defmodule PgSubscriber.Handler do
           {:error, nil}
       end
 
-    case result do
-      {:publish, pg_message} ->
-        {:publish, pg_message.from_data!(msg) |> MessageProtocol.to_core_message()}
-
-      result ->
-        result
+    with {:publish, pg_msg_type} <- result,
+         {:ok, pg_message} <- pg_msg_type.from_data(msg) do
+      {:publish, MessageProtocol.to_core_message(pg_message)}
     end
   end
 end
