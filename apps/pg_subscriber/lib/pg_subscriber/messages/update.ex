@@ -5,7 +5,6 @@ defmodule PgSubscriber.Messages.Update do
   alias PgSubscriber.Messages.MessageBehaviour
   alias PgSubscriber.Column
   alias PgSubscriber.TupleData
-  alias PgSubscriber.Messages.Update
   alias PgSubscriber.Utils
   require Logger
 
@@ -21,31 +20,28 @@ defmodule PgSubscriber.Messages.Update do
   defstruct @enforce_keys
 
   @impl MessageBehaviour
-  def from_data!(data) do
-    <<relation_oid::32, rest::binary>> = data
+  def from_data(data) do
+    with <<relation_oid::32, rest::binary>> <- data,
+         <<_tuple_type::8, rest::binary>> <- rest,
+         {:ok, old_data, rest} <- TupleData.get_tuple_data(rest),
+         <<"N", rest::binary>> <- rest,
+         {:ok, new_data, <<>>} <-
+           TupleData.get_tuple_data(rest) do
+      {:ok,
+       %__MODULE__{
+         relation_oid: relation_oid,
+         old_columns: old_data.columns,
+         new_columns: new_data.columns
+       }}
+    else
+      {:error, reason} ->
+        {:error, reason}
 
-    {_tuple_type, old_data, rest} =
-      case rest do
-        <<tuple_type::8, rest::binary>> when tuple_type in [?O, ?K] ->
-          Logger.info("Got #{<<tuple_type>>} tuple")
-          {:ok, tuple_data, rest} = TupleData.get_tuple_data(rest)
-          {tuple_type, tuple_data, rest}
-
-        _ ->
-          Logger.info("Not O/K tuple")
-          {nil, nil, rest}
-      end
-
-    <<"N", rest::binary>> = rest
-    {:ok, new_data, <<>>} = TupleData.get_tuple_data(rest)
-
-    %Update{
-      relation_oid: relation_oid,
-      # TODO: convert TupleData struct to some generic representation of data
-      old_columns: old_data.columns,
-      # TODO: convert TupleData struct to some generic representation of data
-      new_columns: new_data.columns
-    }
+      _ ->
+        Logger.error("Got unexpected error while parsing UPDATE message")
+        Logger.error(raw_update: data)
+        {:error, "Unexpected error"}
+    end
   end
 end
 
