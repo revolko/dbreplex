@@ -2,7 +2,6 @@ defmodule PgSubscriber.Messages.Delete do
   @moduledoc """
   Helper module providing utility functions for handling of DELETE messages.
   """
-  alias PgSubscriber.Messages.Delete
   alias PgSubscriber.Column
   alias PgSubscriber.TupleData
   alias PgSubscriber.Messages.MessageBehaviour
@@ -20,15 +19,16 @@ defmodule PgSubscriber.Messages.Delete do
   defstruct @enforce_keys
 
   @impl MessageBehaviour
-  def from_data!(data) do
-    <<relation_oid::32, tuple_type::8, rest::binary>> = data
-    {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest)
-
-    %Delete{
-      relation_oid: relation_oid,
-      tuple_type: <<tuple_type>>,
-      columns: tuple_data.columns
-    }
+  def from_data(data) do
+    with <<relation_oid::32, tuple_type::8, rest::binary>> = data,
+         {:ok, tuple_data, <<>>} = TupleData.get_tuple_data(rest) do
+      {:ok,
+       %__MODULE__{
+         relation_oid: relation_oid,
+         tuple_type: <<tuple_type>>,
+         columns: tuple_data.columns
+       }}
+    end
   end
 end
 

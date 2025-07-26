@@ -18,14 +18,23 @@ defmodule PgSubscriber.Messages.Insert do
   defstruct @enforce_keys
 
   @impl MessageBehaviour
-  def from_data!(data) do
+  def from_data(data) do
     <<relation_oid::32, "N", rest::binary>> = data
-    {:ok, new_data, <<>>} = TupleData.get_tuple_data(rest)
 
-    %__MODULE__{
-      relation_oid: relation_oid,
-      columns: new_data.columns
-    }
+    case TupleData.get_tuple_data(rest) do
+      {:ok, new_data, <<>>} ->
+        {:ok,
+         %__MODULE__{
+           relation_oid: relation_oid,
+           columns: new_data.columns
+         }}
+
+      {:error, reason} ->
+        {:error, reason}
+
+      _ ->
+        {:error, "Unable to parse Tuple Data"}
+    end
   end
 end
 
