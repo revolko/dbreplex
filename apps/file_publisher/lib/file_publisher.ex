@@ -2,6 +2,10 @@ defmodule FilePublisher do
   @moduledoc """
   Documentation for `FilePublisher`.
   """
+  alias Core.Messages.Delete
+  alias Core.Messages.Update
+  alias Core.Messages.Insert
+  alias FilePublisher.Serializer
 
   use GenServer
   require Logger
@@ -36,6 +40,11 @@ defmodule FilePublisher do
   def terminate(_reason, %{file: file}) do
     File.close(file)
     :ok
+  end
+
+  defp serialize(%message_type{} = message)
+       when message_type in [Insert, Update, Delete] do
+    Serializer.serialize(message)
   end
 
   defp serialize(message) do

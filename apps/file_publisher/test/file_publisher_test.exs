@@ -15,7 +15,7 @@ defmodule FilePublisherTest do
   defp save_message(pid, num) do
     message = %Insert{
       relation_oid: num,
-      columns: %{id: 1, name: "Juraj"}
+      columns: [%{kind: 1, value: "Juraj"}]
     }
 
     FilePublisher.handle_message(pid, message)
