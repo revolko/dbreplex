@@ -5,9 +5,9 @@ defmodule Core.Messages.Delete do
 
   @type t :: %__MODULE__{
           relation_oid: pos_integer(),
-          columns: list()
+          where: list()
         }
 
-  @enforce_keys [:relation_oid, :columns]
+  @enforce_keys [:relation_oid, :where]
   defstruct @enforce_keys
 end
