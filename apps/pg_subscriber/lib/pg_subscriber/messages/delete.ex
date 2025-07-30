@@ -47,7 +47,7 @@ defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Delete do
   def to_core_message(delete) do
     %CoreDelete{
       relation_oid: delete.relation_oid,
-      columns: delete.columns
+      where: delete.columns
     }
   end
 end
