@@ -42,12 +42,29 @@ defmodule PgSubscriber.Messages.Delete do
 end
 
 defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Delete do
+  alias PgSubscriber.RelationStore
   alias Core.Messages.Delete, as: CoreDelete
+  alias Core.Messages.Column, as: CoreColumn
+  alias PgSubscriber.Messages.Delete, as: PgDelete
 
-  def to_core_message(delete) do
-    %CoreDelete{
-      relation_oid: delete.relation_oid,
-      where: delete.columns
-    }
+  def to_core_message(%PgDelete{
+        relation_oid: relation_oid,
+        columns: columns,
+        tuple_type: _
+      }) do
+    with {:ok, relation} <- RelationStore.get_relation(relation_oid) do
+      {:ok,
+       %CoreDelete{
+         relation_oid: relation_oid,
+         where:
+           Enum.zip(relation.columns, columns)
+           |> Enum.filter(fn {col_meta, _} -> col_meta.in_primary_key end)
+           |> Enum.map(fn {col_meta, col_data} ->
+             %CoreColumn{name: col_meta.name, value: col_data.value}
+           end)
+       }}
+    else
+      {:error, nil} -> {:error, "Relation [#{relation_oid}] does not exist"}
+    end
   end
 end
