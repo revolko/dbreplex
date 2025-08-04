@@ -43,9 +43,10 @@ defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Insert do
   alias Core.Messages.Insert
 
   def to_core_message(insert) do
-    %Insert{
-      relation_oid: insert.relation_oid,
-      columns: insert.columns
-    }
+    {:ok,
+     %Insert{
+       relation_oid: insert.relation_oid,
+       columns: insert.columns
+     }}
   end
 end

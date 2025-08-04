@@ -75,8 +75,9 @@ defmodule PgSubscriber.Handler do
       end
 
     with {:publish, pg_msg_type} <- result,
-         {:ok, pg_message} <- pg_msg_type.from_data(msg) do
-      {:publish, MessageProtocol.to_core_message(pg_message)}
+         {:ok, pg_message} <- pg_msg_type.from_data(msg),
+         {:ok, core_message} <- MessageProtocol.to_core_message(pg_message) do
+      {:publish, core_message}
     end
   end
 end
