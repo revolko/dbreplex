@@ -36,9 +36,5 @@ config :main_app,
     %{
       module: FilePublisher,
       init_arg: "/tmp/replication.log"
-    },
-    %{
-      module: FilePublisher,
-      init_arg: "/tmp/replication2.log"
     }
   ]
