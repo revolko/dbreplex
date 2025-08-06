@@ -19,11 +19,23 @@ defmodule PgSubscriber.Messages.Update do
   @enforce_keys [:relation_oid, :old_columns, :new_columns]
   defstruct @enforce_keys
 
+  @min_update_bit_size 41
+
   @impl MessageBehaviour
-  def from_data(data) do
-    with <<relation_oid::32, rest::binary>> <- data,
-         <<_tuple_type::8, rest::binary>> <- rest,
-         {:ok, old_data, rest} <- TupleData.get_tuple_data(rest),
+  def from_data(data) when bit_size(data) < @min_update_bit_size do
+    Logger.error(
+      "UPDATE message data too small: expected at least #{@min_update_bit_size} bits, got #{bit_size(data)}"
+    )
+
+    {:error, "UPDATE message data too small"}
+  end
+
+  @impl MessageBehaviour
+  def from_data(<<relation_oid::32, tuple_type::8, rest::binary>> = data)
+      when rest != <<>> and tuple_type in [?O, ?K] do
+    Logger.debug("Parsing Postgres UPDATE with O/K TupleData")
+
+    with {:ok, old_data, rest} <- TupleData.get_tuple_data(rest),
          <<"N", rest::binary>> <- rest,
          {:ok, new_data, <<>>} <-
            TupleData.get_tuple_data(rest) do
@@ -39,6 +51,31 @@ defmodule PgSubscriber.Messages.Update do
 
       _ ->
         Logger.error("Got unexpected error while parsing UPDATE message")
+        # TODO: potentially leaking sensitive data
+        Logger.error(raw_update: data)
+        {:error, "Unexpected error"}
+    end
+  end
+
+  @impl MessageBehaviour
+  def from_data(<<relation_oid::32, tuple_type::8, rest::binary>> = data)
+      when rest != <<>> and tuple_type === ?N do
+    Logger.debug("Parsing Postgres UPDATE without O/K TupleData")
+
+    with {:ok, new_data, <<>>} <-
+           TupleData.get_tuple_data(rest) do
+      {:ok,
+       %__MODULE__{
+         relation_oid: relation_oid,
+         old_columns: [],
+         new_columns: new_data.columns
+       }}
+    else
+      {:error, reason} ->
+        {:error, reason}
+
+      _ ->
+        Logger.error("Got unexpected error while parsing UPDATE message")
         Logger.error(raw_update: data)
         {:error, "Unexpected error"}
     end
@@ -46,28 +83,66 @@ defmodule PgSubscriber.Messages.Update do
 end
 
 defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Update do
+  require Logger
   alias Core.Messages.Update
   alias Core.Messages.Column
   alias PgSubscriber.RelationStore
+  alias PgSubscriber.Messages.Update, as: PgpUpdate
 
-  def to_core_message(update_message) do
-    with {:ok, relation} <- RelationStore.get_relation(update_message.relation_oid) do
+  def to_core_message(%PgpUpdate{
+        relation_oid: relation_oid,
+        old_columns: old_columns,
+        new_columns: new_columns
+      })
+      when old_columns !== [] do
+    Logger.debug("Converting PgUpdate with non-empty old_columns.")
+
+    with {:ok, relation} <- RelationStore.get_relation(relation_oid) do
       {:ok,
        %Update{
-         relation_oid: update_message.relation_oid,
+         relation_oid: relation_oid,
          columns:
-           Enum.zip(update_message.new_columns, relation.columns)
+           Enum.zip(new_columns, relation.columns)
            |> Enum.map(fn {new_col, rel_col} ->
              %Column{name: rel_col.name, value: new_col.value}
            end),
          where:
-           Enum.zip(update_message.old_columns, relation.columns)
+           Enum.zip(old_columns, relation.columns)
            |> Enum.map(fn {old_col, rel_col} ->
              %Column{name: rel_col.name, value: old_col.value}
            end)
        }}
     else
-      {:error, nil} -> {:error, "Relation [#{update_message.relation_oid}] does not exists"}
+      {:error, nil} -> {:error, "Relation [#{relation_oid}] does not exist"}
+    end
+  end
+
+  def to_core_message(%PgpUpdate{
+        relation_oid: relation_oid,
+        old_columns: old_columns,
+        new_columns: new_columns
+      })
+      when old_columns === [] do
+    Logger.debug("Converting PgUpdate with empty old_columns.")
+
+    with {:ok, relation} <- RelationStore.get_relation(relation_oid) do
+      {:ok,
+       %Update{
+         relation_oid: relation_oid,
+         columns:
+           Enum.zip(new_columns, relation.columns)
+           |> Enum.map(fn {new_col, rel_col} ->
+             %Column{name: rel_col.name, value: new_col.value}
+           end),
+         where:
+           Enum.zip(new_columns, relation.columns)
+           |> Enum.filter(fn {_, column_meta} -> column_meta.in_primary_key end)
+           |> Enum.map(fn {col_data, col_meta} ->
+             %Column{name: col_meta.name, value: col_data.value}
+           end)
+       }}
+    else
+      {:error, nil} -> {:error, "Relation [#{relation_oid}] does not exist"}
     end
   end
 end
