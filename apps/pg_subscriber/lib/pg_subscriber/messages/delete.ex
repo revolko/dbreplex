@@ -19,10 +19,20 @@ defmodule PgSubscriber.Messages.Delete do
   @enforce_keys [:relation_oid, :tuple_type, :columns]
   defstruct @enforce_keys
 
+  @min_delete_bit_size 41
+
   @impl MessageBehaviour
-  def from_data(data) do
-    with <<relation_oid::32, tuple_type::8, rest::binary>> <- data,
-         {:ok, tuple_data, <<>>} <- TupleData.get_tuple_data(rest) do
+  def from_data(data) when bit_size(data) < @min_delete_bit_size do
+    Logger.error(
+      "DELETE message data too small: expected at least #{@min_delete_bit_size} bits, got #{bit_size(data)}"
+    )
+
+    {:error, "DELETE message data too small"}
+  end
+
+  @impl MessageBehaviour
+  def from_data(<<relation_oid::32, tuple_type::8, rest::binary>> = data) when rest !== <<>> do
+    with {:ok, tuple_data, <<>>} <- TupleData.get_tuple_data(rest) do
       {:ok,
        %__MODULE__{
          relation_oid: relation_oid,
