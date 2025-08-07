@@ -16,4 +16,9 @@ CREATE TABLE test_primary (
   id serial PRIMARY KEY
 );
 
+CREATE TABLE test_foreign (
+  id serial PRIMARY KEY,
+  test_primary_id integer NOT NULL REFERENCES test_primary(id) ON DELETE CASCADE
+);
+
 CREATE PUBLICATION postgrex_example FOR ALL TABLES;
