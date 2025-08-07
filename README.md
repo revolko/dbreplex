@@ -61,8 +61,8 @@ connection makes database to push replication messages to the subscriber (push-b
     * :x: TRUNCATE
  * :white_check_mark: tables without primary keys
  * :white_check_mark: tables with primary keys
- * :x: tables with foreign keys
-    * not yet tested
+ * :white_check_mark: tables with foreign keys
+ * :x: full initial load
 
 ### Oracle :pushpin:
 
