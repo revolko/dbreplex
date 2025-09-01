@@ -40,13 +40,18 @@ defmodule PgSubscriber.Messages.Insert do
 end
 
 defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Insert do
+  alias PgSubscriber.RelationStore
   alias Core.Messages.Insert
 
   def to_core_message(insert) do
-    {:ok,
-     %Insert{
-       relation_oid: insert.relation_oid,
-       columns: insert.columns
-     }}
+    with {:ok, relation} <- RelationStore.get_relation(insert.relation_oid) do
+      {:ok,
+       %Insert{
+         table_name: "#{relation.namespace}.#{relation.name}",
+         columns: insert.columns
+       }}
+    else
+      {:error, nil} -> {:error, "Relation [#{insert.relation_oid}] does not exist"}
+    end
   end
 end

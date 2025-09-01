@@ -4,13 +4,13 @@ defmodule Core.Messages.Insert do
   """
 
   @type t :: %__MODULE__{
-          relation_oid: pos_integer(),
+          table_name: bitstring(),
           columns: map(),
           timestamp: DateTime.t() | nil
         }
 
   defstruct [
-    :relation_oid,
+    :table_name,
     :columns,
     :timestamp
   ]
