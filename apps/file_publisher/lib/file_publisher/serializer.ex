@@ -12,7 +12,7 @@ end
 
 defimpl FilePublisher.Serializer, for: Core.Messages.Insert do
   def serialize(%Core.Messages.Insert{} = message) do
-    "INSERT INTO #{message.relation_oid} VALUES " <>
+    "INSERT INTO #{message.table_name} VALUES " <>
       (Enum.map(message.columns, fn col -> "#{col.value}" end)
        |> Enum.join(" "))
   end

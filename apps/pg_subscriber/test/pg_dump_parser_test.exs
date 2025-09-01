@@ -36,7 +36,7 @@ defmodule PgSubscriber.PgDumpParserTest do
 
     expected_inserts = [
       %Insert{
-        relation_oid: "test.table",
+        table_name: "test.table",
         columns: [
           %{name: "did", value: "55"},
           %{name: "number", value: "123456"},
@@ -46,7 +46,7 @@ defmodule PgSubscriber.PgDumpParserTest do
         timestamp: ""
       },
       %Insert{
-        relation_oid: "test.table",
+        table_name: "test.table",
         columns: [
           %{name: "did", value: "'55'"},
           %{name: "number", value: "123456"},

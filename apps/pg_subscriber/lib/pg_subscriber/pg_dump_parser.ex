@@ -16,8 +16,7 @@ defmodule PgSubscriber.PgDumpParser do
   """
   def to_core_insert(pg_dump_inserts) do
     Enum.map(pg_dump_inserts, fn raw_insert ->
-      # for now the relation oid is the name of the table (should change relation oid to the name)
-      [[relation_oid, columns, values]] =
+      [[table_name, columns, values]] =
         Regex.scan(
           ~r/INSERT INTO ([^ ]+) \(([^\)]+)\) VALUES \(([^\)]+)\);/,
           raw_insert,
@@ -25,7 +24,7 @@ defmodule PgSubscriber.PgDumpParser do
         )
 
       %Insert{
-        relation_oid: relation_oid,
+        table_name: table_name,
         columns:
           Enum.zip_with(String.split(columns, ", "), pg_tuple_to_list(values), fn column_name,
                                                                                   value ->
