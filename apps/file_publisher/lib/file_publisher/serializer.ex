@@ -20,7 +20,7 @@ end
 
 defimpl FilePublisher.Serializer, for: Core.Messages.Update do
   def serialize(%Core.Messages.Update{} = message) do
-    "UPDATE #{message.relation_oid} VALUES " <>
+    "UPDATE #{message.table_name} VALUES " <>
       (Enum.map(message.columns, fn col -> "#{col.value}" end) |> Enum.join(" ")) <>
       " WHERE " <>
       (Enum.map(message.where, fn col -> "#{col.name}=#{col.value}" end) |> Enum.join(" "))

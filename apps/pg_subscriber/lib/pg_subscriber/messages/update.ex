@@ -100,7 +100,7 @@ defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Update do
     with {:ok, relation} <- RelationStore.get_relation(relation_oid) do
       {:ok,
        %Update{
-         relation_oid: relation_oid,
+         table_name: "#{relation.namespace}.#{relation.name}",
          columns:
            Enum.zip(new_columns, relation.columns)
            |> Enum.map(fn {new_col, rel_col} ->
@@ -128,7 +128,7 @@ defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Update do
     with {:ok, relation} <- RelationStore.get_relation(relation_oid) do
       {:ok,
        %Update{
-         relation_oid: relation_oid,
+         table_name: "#{relation.namespace}.#{relation.name}",
          columns:
            Enum.zip(new_columns, relation.columns)
            |> Enum.map(fn {new_col, rel_col} ->

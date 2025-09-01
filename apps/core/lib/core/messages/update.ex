@@ -5,11 +5,11 @@ defmodule Core.Messages.Update do
   alias Core.Messages.Column
 
   @type t :: %__MODULE__{
-          relation_oid: pos_integer(),
+          table_name: bitstring(),
           columns: list(Column.t()),
           where: list(Column.t())
         }
 
-  @enforce_keys [:relation_oid, :columns, :where]
+  @enforce_keys [:table_name, :columns, :where]
   defstruct @enforce_keys
 end
