@@ -65,7 +65,7 @@ defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Delete do
     with {:ok, relation} <- RelationStore.get_relation(relation_oid) do
       {:ok,
        %CoreDelete{
-         relation_oid: relation_oid,
+         table_name: "#{relation.namespace}.#{relation.name}",
          where:
            Enum.zip(relation.columns, columns)
            |> Enum.filter(fn {col_meta, _} -> col_meta.in_primary_key end)
