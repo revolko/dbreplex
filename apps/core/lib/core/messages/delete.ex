@@ -5,10 +5,10 @@ defmodule Core.Messages.Delete do
   alias Core.Messages.Column
 
   @type t :: %__MODULE__{
-          relation_oid: pos_integer(),
+          table_name: bitstring(),
           where: [%Column{}]
         }
 
-  @enforce_keys [:relation_oid, :where]
+  @enforce_keys [:table_name, :where]
   defstruct @enforce_keys
 end

@@ -29,7 +29,7 @@ end
 
 defimpl FilePublisher.Serializer, for: Core.Messages.Delete do
   def serialize(%Core.Messages.Delete{} = message) do
-    "DELETE #{message.relation_oid} WHERE " <>
+    "DELETE #{message.table_name} WHERE " <>
       (Enum.map(message.where, fn col -> "#{col.name}=#{col.value}" end) |> Enum.join(" "))
   end
 end
