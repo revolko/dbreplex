@@ -21,3 +21,6 @@ erl_crash.dump
 
 # drawio specific ignore
 *.drawio.bkp
+
+# expert LSP
+.expert/
