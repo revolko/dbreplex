@@ -15,26 +15,3 @@ import Config
 #       level: :info,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
-#
-
-config :main_app,
-  subscribers: [
-    %{
-      module: PgSubscriber,
-      init_arg: [
-        repl: [
-          host: "localhost",
-          database: "postgres",
-          username: "postgres",
-          password: "postgres"
-        ],
-        handler: []
-      ]
-    }
-  ],
-  publishers: [
-    %{
-      module: FilePublisher,
-      init_arg: "/tmp/replication.log"
-    }
-  ]

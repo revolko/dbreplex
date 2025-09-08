@@ -6,42 +6,22 @@
  * docker (to run examples)
 
 ## How to run
-The application needs to have configured `subscribers` and `publishers` implementations in [config.exs](./config/config.exs) file:
-```elixir
-config :main_app,
-  subscribers: [
-    %{
-      module: PgSubscriber,
-      init_arg: [
-        repl: [
-          host: "localhost",
-          database: "postgres",
-          username: "postgres",
-          password: "postgres"
-        ],
-        handler: []
-      ]
-    }
-  ],
-  publishers: [
-    %{
-      module: FilePublisher,
-      init_arg: "/tmp/replication.log"
-    }
-  ]
+Either start the application with iex console:
+```bash
+iex -S mix run --no-halt
+```
+
+Or use [example.exs](./example.exs) script to quickly startup PgSubscriber with FilePublisher:
+```bash
+iex -S mix run example.exs
 ```
 
 `PgSubscriber` requires running Postgres database. Checkout [postgres example](./apps/pg_subscriber/example/) for a quick setup.
 Make sure that `FilePublisher` points to the existing location of your system (file does not need to exist, but parent
 directories must).
 
-If everything is properly configured, run the application:
-```bash
-mix run --no-halt
-```
-
-The application configures all `subscribers` and `publishers` (based on the provided configuration). Finally, connect to a
-subscriber and execute INSERT/UPDATE/DELETE statement. The statement will be logged and saved by all publishers (in case of
+Finally, connect to a subscriber and execute INSERT/UPDATE/DELETE statement. The statement will be logged and saved by all
+publishers (in case of
 FilePublisher the statement is saved to a file).
 
 ## Subscribers
