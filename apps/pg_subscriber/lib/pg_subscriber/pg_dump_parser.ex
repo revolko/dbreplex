@@ -2,7 +2,31 @@ defmodule PgSubscriber.PgDumpParser do
   @moduledoc """
   Utility module providing functions for parsing pg_dump output.
   """
+  require Logger
   alias Core.Messages.Insert
+
+  @doc """
+  Load pg_dump file, filter INSERTS and send them to Publishers.
+  Expects file path (can be relative) as an input argument
+  """
+  def process_dump(pg_dump_path) do
+    with {:ok, pg_dump} <- File.read(pg_dump_path) do
+      pg_core_inserts = filter_inserts(pg_dump) |> to_core_insert()
+
+      Enum.each(pg_core_inserts, fn core_insert ->
+        Registry.dispatch(PublisherRegistry, :publishers, fn pubs ->
+          for {pid, {module, handle_message}} <- pubs do
+            apply(module, handle_message, [pid, core_insert])
+          end
+        end)
+      end)
+    else
+      error ->
+        Logger.error("Error while processing pg_dump file: #{pg_dump_path}")
+        Logger.error(error: error)
+        error
+    end
+  end
 
   @doc """
   Filter INSERT statements from the pg_dump output.
