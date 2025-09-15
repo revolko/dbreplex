@@ -1,0 +1,5 @@
+INSERT INTO public.distributors VALUES 55 'name_dist'
+INSERT INTO public.distributors VALUES 11 'name_dist2'
+INSERT INTO public.films VALUES 74 'name_film'
+INSERT INTO public.films VALUES 64 'name_film2'
+INSERT INTO public.films VALUES 10 name_film3
