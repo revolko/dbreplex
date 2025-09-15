@@ -1,0 +1,56 @@
+name: Nightly Integration Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  integration_test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/main_app
+    env:
+      MIX_ENV: test
+    strategy:
+      matrix:
+        elixir: ["1.18.4"]
+        otp: ["27"]
+
+    # Remove if you don't need a database
+    services:
+      db:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --name postgres-test
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Initialize Postgres database
+        run: |
+          sudo apt install postgresql-client
+          PGPASSWORD=postgres psql --user postgres --host localhost -f ./test/assets/init.sql
+          docker restart postgres-test
+
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Run Tests
+        run: |
+          mix test --include integration
