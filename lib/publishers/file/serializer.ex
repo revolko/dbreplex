@@ -1,6 +1,6 @@
-defprotocol FilePublisher.Serializer do
+defprotocol Publishers.File.Serializer do
   @moduledoc """
-  Protocol defining serialization for FilePublisher.
+  Protocol defining serialization for Publishers.File.
   """
 
   @doc """
@@ -10,7 +10,7 @@ defprotocol FilePublisher.Serializer do
   def serialize(message)
 end
 
-defimpl FilePublisher.Serializer, for: Core.Messages.Insert do
+defimpl Publishers.File.Serializer, for: Core.Messages.Insert do
   def serialize(%Core.Messages.Insert{} = message) do
     "INSERT INTO #{message.table_name} VALUES " <>
       (Enum.map(message.columns, fn col -> "#{col.value}" end)
@@ -18,7 +18,7 @@ defimpl FilePublisher.Serializer, for: Core.Messages.Insert do
   end
 end
 
-defimpl FilePublisher.Serializer, for: Core.Messages.Update do
+defimpl Publishers.File.Serializer, for: Core.Messages.Update do
   def serialize(%Core.Messages.Update{} = message) do
     "UPDATE #{message.table_name} VALUES " <>
       (Enum.map(message.columns, fn col -> "#{col.value}" end) |> Enum.join(" ")) <>
@@ -27,7 +27,7 @@ defimpl FilePublisher.Serializer, for: Core.Messages.Update do
   end
 end
 
-defimpl FilePublisher.Serializer, for: Core.Messages.Delete do
+defimpl Publishers.File.Serializer, for: Core.Messages.Delete do
   def serialize(%Core.Messages.Delete{} = message) do
     "DELETE #{message.table_name} WHERE " <>
       (Enum.map(message.where, fn col -> "#{col.name}=#{col.value}" end) |> Enum.join(" "))

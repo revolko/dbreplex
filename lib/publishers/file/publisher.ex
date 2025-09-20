@@ -1,11 +1,11 @@
-defmodule FilePublisher do
+defmodule Publishers.File do
   @moduledoc """
-  Documentation for `FilePublisher`.
+  Entry point for `Publishers.File`.
   """
   alias Core.Messages.Delete
   alias Core.Messages.Update
   alias Core.Messages.Insert
-  alias FilePublisher.Serializer
+  alias Publishers.File.Serializer
 
   use GenServer
   require Logger
@@ -23,7 +23,7 @@ defmodule FilePublisher do
 
   @impl true
   def init(file_path) do
-    Registry.register(PublisherRegistry, :publishers, {FilePublisher, :handle_message})
+    Registry.register(PublisherRegistry, :publishers, {Publishers.File, :handle_message})
     {:ok, file} = File.open(file_path, [:append])
     {:ok, %{file: file}}
   end
