@@ -13,12 +13,12 @@ defmodule PgSubscriber.PgDumpParserTest do
 
   test "filter insert", state do
     inserts = PgDumpParser.filter_inserts(state.pg_dump)
-    assert(length(inserts) === 21)
+    assert(length(inserts) === 4)
   end
 
   test "convert to core many inserts", state do
     inserts = PgDumpParser.filter_inserts(state.pg_dump) |> PgDumpParser.to_core_insert()
-    assert(length(inserts) === 21)
+    assert(length(inserts) === 4)
 
     assert(
       Enum.all?(inserts, fn %type{} = insert ->

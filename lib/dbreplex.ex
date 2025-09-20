@@ -1,4 +1,4 @@
-defmodule MainApp do
+defmodule DBReplex do
   @moduledoc false
 
   use Application

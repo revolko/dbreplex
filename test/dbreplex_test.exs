@@ -1,7 +1,7 @@
-defmodule MainAppTest do
+defmodule DBReplexTest do
   alias PgSubscriber.PgDumpParser
   use ExUnit.Case
-  doctest MainApp
+  doctest DBReplex
 
   @file_publisher_target "/tmp/dbreplex-integration.txt"
   @expected_file_publisher_content "./test/assets/expected_file_publisher_content.txt"
