@@ -1,6 +1,6 @@
 DynamicSupervisor.start_child(
   MainApp.DynamicSupervisor,
-  {PgSubscriber,
+  {Subscribers.Postgres,
    [
      repl: [host: "localhost", username: "postgres", database: "postgres", password: "postgres"],
      handler: []

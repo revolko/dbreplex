@@ -1,11 +1,11 @@
-defmodule PgSubscriber.Messages.Update do
+defmodule Subscribers.Postgres.Messages.Update do
   @moduledoc """
   Helper module providing utility functions for proper work with UPDATE messages.
   """
-  alias PgSubscriber.Messages.MessageBehaviour
-  alias PgSubscriber.Column
-  alias PgSubscriber.TupleData
-  alias PgSubscriber.Utils
+  alias Subscribers.Postgres.Messages.MessageBehaviour
+  alias Subscribers.Postgres.Column
+  alias Subscribers.Postgres.TupleData
+  alias Subscribers.Postgres.Utils
   require Logger
 
   @behaviour MessageBehaviour
@@ -82,12 +82,12 @@ defmodule PgSubscriber.Messages.Update do
   end
 end
 
-defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Update do
+defimpl Core.Messages.MessageProtocol, for: Subscribers.Postgres.Messages.Update do
   require Logger
   alias Core.Messages.Update
   alias Core.Messages.Column
-  alias PgSubscriber.RelationStore
-  alias PgSubscriber.Messages.Update, as: PgpUpdate
+  alias Subscribers.Postgres.RelationStore
+  alias Subscribers.Postgres.Messages.Update, as: PgpUpdate
 
   def to_core_message(%PgpUpdate{
         relation_oid: relation_oid,
