@@ -7,12 +7,12 @@ defmodule DBReplexTest do
   @expected_file_publisher_content "./test/assets/expected_file_publisher_content.txt"
 
   @tag integration: true
-  test "Subscribers.Postgres to FilePublisher" do
+  test "Subscribers.Postgres to Publishers.File" do
     # initialization
     {:ok, file_publisher} =
       DynamicSupervisor.start_child(
         MainApp.DynamicSupervisor,
-        {FilePublisher, [@file_publisher_target]}
+        {Publishers.File, [@file_publisher_target]}
       )
 
     {:ok, pg_subscriber} =

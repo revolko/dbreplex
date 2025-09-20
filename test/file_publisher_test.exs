@@ -1,10 +1,10 @@
-defmodule FilePublisherTest do
+defmodule Publishers.FileTest do
   alias Core.Messages.Insert
   use ExUnit.Case
-  doctest FilePublisher
+  doctest Publishers.File
 
   test "receive INSERT message" do
-    {:ok, pid} = FilePublisher.start_link("/tmp/replication.log")
+    {:ok, pid} = Publishers.File.start_link("/tmp/replication.log")
     save_message(pid, 5)
     Process.sleep(100)
   end
@@ -18,7 +18,7 @@ defmodule FilePublisherTest do
       columns: [%{kind: 1, value: "Juraj"}]
     }
 
-    FilePublisher.handle_message(pid, message)
+    Publishers.File.handle_message(pid, message)
     save_message(pid, num - 1)
   end
 end
