@@ -1,4 +1,4 @@
-defmodule PgSubscriber.Column do
+defmodule Subscribers.Postgres.Column do
   alias __MODULE__
 
   @type kind :: ?n | ?u | ?t | ?b

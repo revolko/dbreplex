@@ -1,13 +1,13 @@
-defmodule PgSubscriber.Messages.Relation do
+defmodule Subscribers.Postgres.Messages.Relation do
   @moduledoc """
   Helper module providing utility functions for handling of RELATION messages.
   """
   require Logger
 
-  alias PgSubscriber.Messages.Relation
-  alias PgSubscriber.Messages.MessageBehaviour
-  alias PgSubscriber.Utils
-  alias PgSubscriber.ColumnMeta
+  alias Subscribers.Postgres.Messages.Relation
+  alias Subscribers.Postgres.Messages.MessageBehaviour
+  alias Subscribers.Postgres.Utils
+  alias Subscribers.Postgres.ColumnMeta
 
   @behaviour MessageBehaviour
 

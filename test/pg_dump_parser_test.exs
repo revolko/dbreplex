@@ -1,6 +1,6 @@
-defmodule PgSubscriber.PgDumpParserTest do
+defmodule Subscribers.Postgres.PgDumpParserTest do
   use ExUnit.Case
-  alias PgSubscriber.PgDumpParser
+  alias Subscribers.Postgres.PgDumpParser
   alias Core.Messages.Insert
   doctest PgDumpParser
 

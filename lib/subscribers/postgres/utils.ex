@@ -1,4 +1,4 @@
-defmodule PgSubscriber.Utils do
+defmodule Subscribers.Postgres.Utils do
   @moduledoc """
   Collection of PG helper functions.
   """

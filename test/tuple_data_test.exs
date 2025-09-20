@@ -1,7 +1,7 @@
 defmodule TupleDataTest do
   use ExUnit.Case
-  alias PgSubscriber.TupleData
-  alias PgSubscriber.Column
+  alias Subscribers.Postgres.TupleData
+  alias Subscribers.Postgres.Column
 
   doctest TupleData
 

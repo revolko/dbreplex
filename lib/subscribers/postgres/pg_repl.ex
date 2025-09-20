@@ -1,4 +1,4 @@
-defmodule PgSubscriber.Repl do
+defmodule Subscribers.Postgres.Repl do
   use Postgrex.ReplicationConnection
 
   def start_link(opts) do
@@ -32,7 +32,7 @@ defmodule PgSubscriber.Repl do
   @impl true
   # https://www.postgresql.org/docs/14/protocol-replication.html
   def handle_data(<<?w, _wal_start::64, _wal_end::64, _clock::64, rest::binary>>, state) do
-    GenServer.cast(PgSubscriber.Handler, {:handle, rest})
+    GenServer.cast(Subscribers.Postgres.Handler, {:handle, rest})
     {:noreply, state}
   end
 

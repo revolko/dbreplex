@@ -1,13 +1,13 @@
-defmodule PgSubscriber.Handler do
+defmodule Subscribers.Postgres.Handler do
   use GenServer
   require Logger
 
-  alias PgSubscriber.Messages.Insert, as: PgInsert
-  alias PgSubscriber.RelationStore
-  alias PgSubscriber.Messages.Relation, as: PgRelation
-  alias PgSubscriber.Messages.Delete, as: PgDelete
+  alias Subscribers.Postgres.Messages.Insert, as: PgInsert
+  alias Subscribers.Postgres.RelationStore
+  alias Subscribers.Postgres.Messages.Relation, as: PgRelation
+  alias Subscribers.Postgres.Messages.Delete, as: PgDelete
   alias Core.Messages.MessageProtocol
-  alias PgSubscriber.Messages.Update, as: PgUpdate
+  alias Subscribers.Postgres.Messages.Update, as: PgUpdate
 
   def start_link(default) do
     GenServer.start_link(__MODULE__, default, name: __MODULE__)

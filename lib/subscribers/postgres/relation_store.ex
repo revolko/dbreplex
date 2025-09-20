@@ -1,4 +1,4 @@
-defmodule PgSubscriber.RelationStore do
+defmodule Subscribers.Postgres.RelationStore do
   @moduledoc """
   Agent storing information about known relations.
   The replication client receives RELATION message everytime
@@ -9,8 +9,8 @@ defmodule PgSubscriber.RelationStore do
 
   use Agent
 
-  alias PgSubscriber.Utils
-  alias PgSubscriber.Messages.Relation
+  alias Subscribers.Postgres.Utils
+  alias Subscribers.Postgres.Messages.Relation
 
   @spec start_link(map()) :: Agent.on_start()
   def start_link(init_state) do

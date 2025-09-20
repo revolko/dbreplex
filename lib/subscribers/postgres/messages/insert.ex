@@ -1,12 +1,12 @@
-defmodule PgSubscriber.Messages.Insert do
+defmodule Subscribers.Postgres.Messages.Insert do
   @moduledoc """
   Represents Postgres INSERT operation in the database replication stream.
   """
   require Logger
-  alias PgSubscriber.Messages.MessageBehaviour
-  alias PgSubscriber.Column
-  alias PgSubscriber.Utils
-  alias PgSubscriber.TupleData
+  alias Subscribers.Postgres.Messages.MessageBehaviour
+  alias Subscribers.Postgres.Column
+  alias Subscribers.Postgres.Utils
+  alias Subscribers.Postgres.TupleData
 
   @behaviour MessageBehaviour
 
@@ -39,8 +39,8 @@ defmodule PgSubscriber.Messages.Insert do
   end
 end
 
-defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Insert do
-  alias PgSubscriber.RelationStore
+defimpl Core.Messages.MessageProtocol, for: Subscribers.Postgres.Messages.Insert do
+  alias Subscribers.Postgres.RelationStore
   alias Core.Messages.Insert
 
   def to_core_message(insert) do

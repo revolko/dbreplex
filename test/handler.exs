@@ -1,6 +1,6 @@
-defmodule PgSubscriber.HandlerTest do
+defmodule Subscribers.Postgres.HandlerTest do
   use ExUnit.Case
-  alias PgSubscriber.Handler
+  alias Subscribers.Postgres.Handler
   doctest Handler
 
   test "insert message" do
