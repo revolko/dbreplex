@@ -10,9 +10,6 @@ jobs:
   integration_test:
     name: Integration Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./apps/main_app
     env:
       MIX_ENV: test
     strategy:
