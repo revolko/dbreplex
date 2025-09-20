@@ -11,12 +11,12 @@ Either start the application with iex console:
 iex -S mix run --no-halt
 ```
 
-Or use [example.exs](./example.exs) script to quickly startup PgSubscriber with FilePublisher:
+Or use [example.exs](./example.exs) script to quickly startup Subscribers.Postgres with FilePublisher:
 ```bash
 iex -S mix run example.exs
 ```
 
-`PgSubscriber` requires running Postgres database. Checkout [postgres example](./apps/pg_subscriber/example/) for a quick setup.
+`Subscribers.Postgres` requires running Postgres database. Checkout [postgres example](./apps/pg_subscriber/example/) for a quick setup.
 Make sure that `FilePublisher` points to the existing location of your system (file does not need to exist, but parent
 directories must).
 
@@ -26,7 +26,7 @@ FilePublisher the statement is saved to a file).
 
 ## Subscribers
 
-### PgSubscriber :rocket:
+### Subscribers.Postgres :rocket:
 Subscriber for Postgres database. The subscriber creates logical replication connection to Postgres database. The replication
 connection makes database to push replication messages to the subscriber (push-based communication).
 

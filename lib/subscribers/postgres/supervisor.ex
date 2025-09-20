@@ -1,6 +1,6 @@
-defmodule PgSubscriber do
+defmodule Subscribers.Postgres do
   @moduledoc """
-  Supervisor for Postgres subscriber.
+  Entry point for Postgres subscriber.
   """
   use Supervisor
 
@@ -10,9 +10,9 @@ defmodule PgSubscriber do
 
   def init(repl: repl_config, handler: handler_config) do
     children = [
-      {PgSubscriber.RelationStore, %{}},
-      {PgSubscriber.Handler, handler_config},
-      {PgSubscriber.Repl, repl_config}
+      {Subscribers.Postgres.RelationStore, %{}},
+      {Subscribers.Postgres.Handler, handler_config},
+      {Subscribers.Postgres.Repl, repl_config}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

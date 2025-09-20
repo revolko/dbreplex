@@ -1,5 +1,5 @@
 defmodule DBReplexTest do
-  alias PgSubscriber.PgDumpParser
+  alias Subscribers.Postgres.PgDumpParser
   use ExUnit.Case
   doctest DBReplex
 
@@ -7,7 +7,7 @@ defmodule DBReplexTest do
   @expected_file_publisher_content "./test/assets/expected_file_publisher_content.txt"
 
   @tag integration: true
-  test "PgSubscriber to FilePublisher" do
+  test "Subscribers.Postgres to FilePublisher" do
     # initialization
     {:ok, file_publisher} =
       DynamicSupervisor.start_child(
@@ -18,7 +18,7 @@ defmodule DBReplexTest do
     {:ok, pg_subscriber} =
       DynamicSupervisor.start_child(
         MainApp.DynamicSupervisor,
-        {PgSubscriber,
+        {Subscribers.Postgres,
          [
            repl: [
              host: "localhost",
@@ -32,7 +32,7 @@ defmodule DBReplexTest do
 
     [{_, pg_handler, _, _}] =
       Enum.filter(Supervisor.which_children(pg_subscriber), fn {module, pid, _, _} ->
-        module == PgSubscriber.Handler
+        module == Subscribers.Postgres.Handler
       end)
 
     # test

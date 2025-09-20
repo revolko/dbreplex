@@ -1,6 +1,6 @@
-defmodule PgSubscriber.TupleData do
+defmodule Subscribers.Postgres.TupleData do
   alias __MODULE__
-  alias PgSubscriber.Column
+  alias Subscribers.Postgres.Column
 
   @type t :: %__MODULE__{
           num_of_cols: integer,

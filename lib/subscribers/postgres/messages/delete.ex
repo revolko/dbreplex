@@ -1,12 +1,12 @@
-defmodule PgSubscriber.Messages.Delete do
+defmodule Subscribers.Postgres.Messages.Delete do
   @moduledoc """
   Helper module providing utility functions for handling of DELETE messages.
   """
   require Logger
-  alias PgSubscriber.Column
-  alias PgSubscriber.TupleData
-  alias PgSubscriber.Messages.MessageBehaviour
-  alias PgSubscriber.Utils
+  alias Subscribers.Postgres.Column
+  alias Subscribers.Postgres.TupleData
+  alias Subscribers.Postgres.Messages.MessageBehaviour
+  alias Subscribers.Postgres.Utils
 
   @behaviour MessageBehaviour
 
@@ -51,11 +51,11 @@ defmodule PgSubscriber.Messages.Delete do
   end
 end
 
-defimpl Core.Messages.MessageProtocol, for: PgSubscriber.Messages.Delete do
-  alias PgSubscriber.RelationStore
+defimpl Core.Messages.MessageProtocol, for: Subscribers.Postgres.Messages.Delete do
+  alias Subscribers.Postgres.RelationStore
   alias Core.Messages.Delete, as: CoreDelete
   alias Core.Messages.Column, as: CoreColumn
-  alias PgSubscriber.Messages.Delete, as: PgDelete
+  alias Subscribers.Postgres.Messages.Delete, as: PgDelete
 
   def to_core_message(%PgDelete{
         relation_oid: relation_oid,

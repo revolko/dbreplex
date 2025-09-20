@@ -1,4 +1,4 @@
-defmodule PgSubscriber.ColumnMeta do
+defmodule Subscribers.Postgres.ColumnMeta do
   @moduledoc """
   Struct containing metadata about Postgres columns.
   """

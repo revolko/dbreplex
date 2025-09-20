@@ -1,4 +1,4 @@
-defmodule PgSubscriber.PgDumpParser do
+defmodule Subscribers.Postgres.PgDumpParser do
   @moduledoc """
   Utility module providing functions for parsing pg_dump output.
   """
