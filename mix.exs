@@ -3,10 +3,18 @@ defmodule DbSubscriptor.MixProject do
 
   def project do
     [
-      apps_path: "apps",
+      app: :dbreplex,
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
+      name: "DBReplex",
       deps: deps()
+    ]
+  end
+
+  def application do
+    [
+      extra_applications: [:logger],
+      mod: {DBReplex, []}
     ]
   end
 
@@ -17,7 +25,8 @@ defmodule DbSubscriptor.MixProject do
   # Run "mix help deps" for examples and options.
   defp deps do
     [
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:postgrex, "~> 0.20.0"}
     ]
   end
 end
