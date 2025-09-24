@@ -2,6 +2,7 @@ defmodule Subscribers.Postgres do
   @moduledoc """
   Entry point for Postgres subscriber.
   """
+  use Boundary, deps: [Core]
   use Supervisor
 
   def start_link(init_arg) do
