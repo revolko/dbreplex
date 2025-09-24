@@ -7,6 +7,7 @@ defmodule Publishers.File do
   alias Core.Messages.Insert
   alias Publishers.File.Serializer
 
+  use Boundary, deps: [Core]
   use GenServer
   require Logger
 

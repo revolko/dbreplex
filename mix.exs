@@ -7,7 +7,8 @@ defmodule DbSubscriptor.MixProject do
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
       name: "DBReplex",
-      deps: deps()
+      deps: deps(),
+      compilers: [:boundary] ++ Mix.compilers()
     ]
   end
 
@@ -26,7 +27,8 @@ defmodule DbSubscriptor.MixProject do
   defp deps do
     [
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:postgrex, "~> 0.20.0"}
+      {:postgrex, "~> 0.20.0"},
+      {:boundary, "~> 0.10", runtime: false}
     ]
   end
 end

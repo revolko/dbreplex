@@ -2,6 +2,7 @@ defmodule DBReplex do
   @moduledoc false
 
   use Application
+  use Boundary
 
   @impl true
   def start(_type, _args) do
