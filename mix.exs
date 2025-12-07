@@ -28,7 +28,8 @@ defmodule DbSubscriptor.MixProject do
     [
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:postgrex, "~> 0.20.0"},
-      {:boundary, "~> 0.10", runtime: false}
+      {:boundary, "~> 0.10", runtime: false},
+      {:libcluster, "~> 3.5"}
     ]
   end
 end

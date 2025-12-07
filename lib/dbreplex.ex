@@ -6,7 +6,10 @@ defmodule DBReplex do
 
   @impl true
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies)
+
     children = [
+      {Cluster.Supervisor, [topologies, [name: DBReplex.ClusterSupervisor]]},
       {DynamicSupervisor, strategy: :one_for_one, name: MainApp.DynamicSupervisor},
       {Registry, [keys: :duplicate, name: PublisherRegistry]}
     ]

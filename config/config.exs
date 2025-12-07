@@ -15,3 +15,11 @@ import Config
 #       level: :info,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
+
+config :libcluster,
+  topologies: [
+    local: [
+      strategy: Cluster.Strategy.Epmd,
+      config: [hosts: [:a@fedora, :b@fedora]]
+    ]
+  ]
